@@ -146,6 +146,9 @@ Vue.component('notes-board', {
             return this.cards.filter(c => c.column === 3)
         }
     },
+    mounted() {
+        this.loadFromStorage()
+    },
     methods: {
         addCard(column) {
             if (column === 1 && this.firstColumnCards.length >= 3) {
@@ -164,6 +167,7 @@ Vue.component('notes-board', {
                 lastCheckedAt: null,
             }
             this.cards.push(newCard)
+            this.saveToStorage()
         },
         handleCardProgress(card) {
             const total = card.items.length
@@ -175,6 +179,7 @@ Vue.component('notes-board', {
             if (card.column === 1 && progress > 50) {
                 if (this.secondColumnCards.length < 5) {
                     card.column = 2
+                    this.saveToStorage()
                 } else {
                     alert('Вторая колонка заполнена (макс. 5 карточек)')
                 }
@@ -183,6 +188,7 @@ Vue.component('notes-board', {
             if (card.column === 2 && progress === 100) {
                 card.column = 3
                 card.completedAt = card.lastCheckedAt || new Date().toISOString()
+                this.saveToStorage()
             }
 
             if (card.column === 1 && progress === 100) {
@@ -191,11 +197,38 @@ Vue.component('notes-board', {
                     this.$nextTick(() => {
                         card.column = 3
                         card.completedAt = card.lastCheckedAt || new Date().toISOString()
+                        this.saveToStorage()
                     })
                 } else {
                     alert('Вторая колонка заполнена (макс. 5 карточек)')
                 }
             }
+        },
+        loadFromStorage() {
+            const saved = localStorage.getItem('notesAppData')
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved)
+                    this.cards = data.cards || []
+                } catch (e) {
+                    console.error('Ошибка загрузки данных:', e)
+                    this.cards = []
+                }
+            }
+        },
+        saveToStorage() {
+            const data = {
+                cards: this.cards
+            }
+            localStorage.setItem('notesAppData', JSON.stringify(data))
+        }
+    },
+    watch: {
+        cards: {
+            handler() {
+                this.saveToStorage()
+            },
+            deep: true
         }
     }
 })
