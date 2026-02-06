@@ -108,7 +108,7 @@ Vue.component('note-card', {
         },
         updateTitle(e) {
             if (!this.isDisabled) {
-                this.card.title = e.target.textContent.trim() || 'New note'
+                this.card.title = e.target.textContent.trim() || 'Новая заметка'
             }
         },
         finishEditing(e) {
@@ -129,10 +129,9 @@ Vue.component('notes-board', {
     template: `
     <div class="columns">
       <div class="column" :class="{ 'blocked': isColumn1Blocked }">
-        <h3>Column 1</h3>
+        <h3>Заметка</h3>
         <div v-if="isColumn1Blocked" class="blocked-overlay">
-          <p>Первый столбец заблокирован</p>
-          <p>Дождитесь завершения карточки во втором столбце</p>
+          <p>Первый столбец заблокирован. Дождитесь завершения карточки во втором столбце</p>
         </div>
         <note-card 
           v-for="card in firstColumnCards" 
@@ -146,7 +145,7 @@ Vue.component('notes-board', {
       </div>
 
       <div class="column">
-        <h3>Column 2</h3>
+        <h3>Заметка выполненная наполовину</h3>
         <note-card 
           v-for="card in secondColumnCards" 
           :key="card.id" 
@@ -159,7 +158,7 @@ Vue.component('notes-board', {
       </div>
 
       <div class="column">
-        <h3>Column 3</h3>
+        <h3>Выполненные заметки</h3>
         <note-card 
           v-for="card in thirdColumnCards" 
           :key="card.id" 
@@ -208,17 +207,17 @@ Vue.component('notes-board', {
     methods: {
         addCard(column) {
             if (column === 1 && this.firstColumnCards.length >= 3) {
-                alert('Первая колонка заполнена (макс. 3 карточки)')
+                alert('Первая колонка заполнена')
                 return
             }
             if (column === 2 && this.secondColumnCards.length >= 5) {
-                alert('Вторая колонка заполнена (макс. 5 карточек)')
+                alert('Вторая колонка заполнена')
                 return
             }
 
             const newCard = {
                 id: Date.now(),
-                title: 'New note',
+                title: 'Новая заметка',
                 column: column,
                 items: [],
                 completedAt: null,
@@ -238,16 +237,13 @@ Vue.component('notes-board', {
                 if (this.secondColumnCards.length < 5) {
                     card.column = 2
                     this.saveToStorage()
-                } else {
                 }
             }
-
             if (card.column === 2 && progress === 100) {
                 card.column = 3
                 card.completedAt = card.lastCheckedAt || new Date().toISOString()
                 this.saveToStorage()
             }
-
             if (card.column === 1 && progress === 100) {
                 if (this.secondColumnCards.length < 5) {
                     card.column = 3
@@ -261,7 +257,7 @@ Vue.component('notes-board', {
             if (saved) {
                 try {
                     const data = JSON.parse(saved)
-                    this.cards = data.cards || []
+                    this.cards = data.cards
                 } catch (e) {
                     console.error('Ошибка загрузки данных:', e)
                     this.cards = []
