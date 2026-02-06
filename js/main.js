@@ -131,7 +131,7 @@ Vue.component('notes-board', {
       <div class="column" :class="{ 'blocked': isColumn1Blocked }">
         <h3>Column 1</h3>
         <div v-if="isColumn1Blocked" class="blocked-overlay">
-          <p>⚠️ Первый столбец заблокирован</p>
+          <p>Первый столбец заблокирован</p>
           <p>Дождитесь завершения карточки во втором столбце</p>
         </div>
         <note-card 
