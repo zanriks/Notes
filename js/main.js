@@ -1,5 +1,5 @@
 Vue.component('note-card', {
-    props: ['card', 'isDisabled', 'column'],
+    props: ['card', 'isDisabled'],
     template: `
         <div :class="['card', cardClass, { 'disabled': isDisabled }]">
             <h3 
@@ -62,7 +62,7 @@ Vue.component('note-card', {
                 this.card.items.length <= this.maxItems
         },
         canAddItem() {
-            return this.card.items.length <= this.minItems
+            return this.card.items.length <= this.maxItems - 1
         },
         totalItems() {
             return this.card.items.length
@@ -134,11 +134,10 @@ Vue.component('notes-board', {
           <p>Первый столбец заблокирован. Дождитесь завершения карточки во втором столбце</p>
         </div>
         <note-card 
-          v-for="card in firstColumnCards" 
-          :key="card.id" 
+          v-for="card in firstColumnCards"
+          :key="card.id"
           :card="card"
           :isDisabled="isColumn1Blocked"
-          :column="1"
           @item-check="handleCardProgress"
         ></note-card>
         <button @click="addCard(1)" :disabled="firstColumnCards.length >= 3 || isColumn1Blocked">+ Add Note</button>
@@ -148,11 +147,10 @@ Vue.component('notes-board', {
       <div class="column">
         <h3>Заметка выполненная наполовину</h3>
         <note-card 
-          v-for="card in secondColumnCards" 
-          :key="card.id" 
+          v-for="card in secondColumnCards"
+          :key="card.id"
           :card="card"
           :isDisabled="false"
-          :column="2"
           @item-check="handleCardProgress"
         ></note-card>
         <button @click="addCard(2)" :disabled="secondColumnCards.length >= 5">+ Add Note</button>
@@ -162,11 +160,10 @@ Vue.component('notes-board', {
       <div class="column">
         <h3>Выполненные заметки</h3>
         <note-card 
-          v-for="card in thirdColumnCards" 
-          :key="card.id" 
+          v-for="card in thirdColumnCards"
+          :key="card.id"
           :card="card"
           :isDisabled="false"
-          :column="3"
           @item-check="handleCardProgress"
         ></note-card>
       </div>
