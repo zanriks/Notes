@@ -1,5 +1,5 @@
 Vue.component('note-card', {
-    props: ['card', 'isDisabled'],
+    props: ['card', 'isDisabled', 'column'],
     template: `
         <div :class="['card', cardClass, { 'disabled': isDisabled }]">
             <h3 
@@ -23,7 +23,7 @@ Vue.component('note-card', {
                     type="checkbox"
                     v-model="item.checked"
                     @change="handleCheck(index)"
-                    :disabled="isDisabled">
+                    :disabled="card.items.length < 3 || isDisabled">
                 <span :class="{'checked': item.checked}">
                     {{ item.text }}
                 </span>
@@ -62,7 +62,7 @@ Vue.component('note-card', {
                 this.card.items.length <= this.maxItems
         },
         canAddItem() {
-            return this.card.items.length < this.maxItems
+            return this.card.items.length <= this.minItems
         },
         totalItems() {
             return this.card.items.length
@@ -138,6 +138,7 @@ Vue.component('notes-board', {
           :key="card.id" 
           :card="card"
           :isDisabled="isColumn1Blocked"
+          :column="1"
           @item-check="handleCardProgress"
         ></note-card>
         <button @click="addCard(1)" :disabled="firstColumnCards.length >= 3 || isColumn1Blocked">+ Add Note</button>
@@ -151,6 +152,7 @@ Vue.component('notes-board', {
           :key="card.id" 
           :card="card"
           :isDisabled="false"
+          :column="2"
           @item-check="handleCardProgress"
         ></note-card>
         <button @click="addCard(2)" :disabled="secondColumnCards.length >= 5">+ Add Note</button>
@@ -164,9 +166,9 @@ Vue.component('notes-board', {
           :key="card.id" 
           :card="card"
           :isDisabled="false"
+          :column="3"
           @item-check="handleCardProgress"
         ></note-card>
-        <button @click="addCard(3)">+ Add Note</button>
       </div>
     </div>
   `,
